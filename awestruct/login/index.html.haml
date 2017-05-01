@@ -1,0 +1,14 @@
+---
+title: Login
+layout: general
+script: /js/login.js
+---
+.text-center
+  %h1
+    A stark contrast
+    %br
+    In a shallow pond
+  %form.ajax{action: '/api-noauth/', method: 'post'}
+    %input{type: 'hidden', name: 'action', value: 'login'}
+    %input{type: 'password', name: 'password'}
+    .error

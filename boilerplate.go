@@ -20,23 +20,6 @@ func loadSiteData() {
 	panicOnErr(err)
 }
 
-func requestCatchAll(w http.ResponseWriter, r *http.Request) {
-	if permanentRedirectOldURLs(r.URL.Path, w, r) {
-		return
-	}
-	serveStaticFilesOr404(w, r)
-}
-
-func permanentRedirectOldURLs(currentURL string, w http.ResponseWriter, r *http.Request) bool {
-	for oldURL, newURL := range siteData.URLPermanentRedirects {
-		if currentURL == oldURL {
-			http.Redirect(w, r, newURL, http.StatusMovedPermanently)
-			return true
-		}
-	}
-	return false
-}
-
 func serveStaticFilesOr404(w http.ResponseWriter, r *http.Request) {
 	staticHandler := StaticHandler{http.Dir(webRoot)}
 	staticHandler.ServeHttp(w, r)

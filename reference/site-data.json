@@ -1,0 +1,20 @@
+{
+	"password": "password",
+	"site-passwords": [
+		[
+			"password",
+			"username",
+			"example.com"
+		],
+		[
+			"password",
+			"username",
+			"subdomain.example.com"
+		]
+	]
+	"new-site-passwords": [
+		"one",
+		"two",
+		"three"
+	],
+}
