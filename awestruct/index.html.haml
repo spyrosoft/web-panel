@@ -1,0 +1,44 @@
+---
+layout: general
+script: /js/panel.js
+---
+.text-right
+  %a{href: '/logout/'}
+    %img{src: '/images/power.png'}
+.row
+  .columns.large-6
+    %form.ajax{action: '/api/', method: 'post'}
+      %input{type: 'hidden', name: 'action', value: 'update-site-file'}
+      .row.columns
+        %h3 Update Site File
+      .row
+        .columns.large-6.medium-6.small-8
+          %input{type: 'password', name: 'password', placeholder: '****************'}
+      .row
+        .columns.medium-8
+          %input{type: 'text', name: 'path-to-file', placeholder: 'relative/path/to/file'}
+          %textarea{name: 'contents', placeholder: 'File contents...'}
+          %button.button{type: 'submit'} Update
+    %hr
+  .columns.large-6
+    %form.ajax{action: '/api/', method: 'post'}
+      %input{type: 'hidden', name: 'action', value: 'new-site'}
+      .row.columns
+        %h3 New Site
+      .row
+        .columns.large-6.medium-6.small-8
+          %input{type: 'text', name: 'one-time-password', placeholder: 'One Time Password'}
+      .row
+        .columns.medium-8
+          %input{type: 'text', name: 'git-repo-url', placeholder: 'Git Repo URL'}
+      .row
+        .columns.medium-8
+          %input{type: 'text', name: 'server-username', placeholder: 'Server Username'}
+      .row
+        .columns.medium-8
+          %input{type: 'text', name: 'site-domain-name', placeholder: 'example.com'}
+      .row
+        .columns.medium-8
+          %textarea{name: 'editable-file-whitelist', placeholder: 'Editable file paths separated by newlines'}
+          %button.button{type: 'submit'} Create
+    %hr

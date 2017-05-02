@@ -13,10 +13,10 @@ type StaticHandler struct {
 	http.Dir
 }
 
-func loadSiteData() {
-	rawSiteData, err := ioutil.ReadFile("private/site-data.json")
+func loadPanelConfig() {
+	rawPanelConfig, err := ioutil.ReadFile(panelConfigFilePath)
 	panicOnErr(err)
-	err = json.Unmarshal(rawSiteData, &siteData)
+	err = json.Unmarshal(rawPanelConfig, &panelConfig)
 	panicOnErr(err)
 }
 

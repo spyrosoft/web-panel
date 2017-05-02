@@ -43,12 +43,12 @@ h1, h2, h3, h4, h5, h6, a, a:hover, a:visited, a:focus, label
 	@extend .standard-fg-color
 
 .button
-	@extend .inverted-fg-color
-	@extend .inverted-bg-color
+	@extend .standard-border-and-bg-and-fg
 
 .button:hover, .button:focus
-	@extend .standard-fg-color
-	@extend .standard-bg-color
+	@extend .standard-border-and-bg-and-fg
+	text-decoration: underline
+	outline: none
 
 .js-off-canvas-exit
 	background-color: rgba( 0, 0, 0, 0.5 )
@@ -79,9 +79,6 @@ h1, h2, h3, h4, h5, h6, a, a:hover, a:visited, a:focus, label
 
 [type=text], [type=password], [type=date], [type=datetime], [type=datetime-local], [type=month], [type=week], [type=email], [type=number], [type=search], [type=tel], [type=time], [type=url], [type=color], textarea, select
 	@extend .standard-border-and-bg-and-fg
-
-[type=text]:focus, [type=password]:focus, [type=date]:focus, [type=datetime]:focus, [type=datetime-local]:focus, [type=month]:focus, [type=week]:focus, [type=email]:focus, [type=number]:focus, [type=search]:focus, [type=tel]:focus, [type=time]:focus, [type=url]:focus, [type=color]:focus, textarea:focus, select:focus
-	@extend .inverted-border-and-bg-and-fg
 
 .invert,
 .invert .invert .invert,
@@ -119,8 +116,6 @@ h1, h2, h3, h4, h5, h6, a, a:hover, a:visited, a:focus, label
 	[type=text], [type=password], [type=date], [type=datetime], [type=datetime-local], [type=month], [type=week], [type=email], [type=number], [type=search], [type=tel], [type=time], [type=url], [type=color], textarea, select
 		@extend .inverted-border-and-bg-and-fg
 		
-	[type=text]:focus, [type=password]:focus, [type=date]:focus, [type=datetime]:focus, [type=datetime-local]:focus, [type=month]:focus, [type=week]:focus, [type=email]:focus, [type=number]:focus, [type=search]:focus, [type=tel]:focus, [type=time]:focus, [type=url]:focus, [type=color]:focus, textarea:focus, select:focus
-		@extend .standard-border-and-bg-and-fg
 
 
 
@@ -156,18 +151,17 @@ h1, h2, h3, h4, h5, h6, a, a:hover, a:visited, a:focus, label
 	
 	[type=text], [type=password], [type=date], [type=datetime], [type=datetime-local], [type=month], [type=week], [type=email], [type=number], [type=search], [type=tel], [type=time], [type=url], [type=color], textarea, select
 		@extend .standard-border-and-bg-and-fg
-		
-	[type=text]:focus, [type=password]:focus, [type=date]:focus, [type=datetime]:focus, [type=datetime-local]:focus, [type=month]:focus, [type=week]:focus, [type=email]:focus, [type=number]:focus, [type=search]:focus, [type=tel]:focus, [type=time]:focus, [type=url]:focus, [type=color]:focus, textarea:focus, select:focus
-		@extend .inverted-border-and-bg-and-fg
 
 
 /* Spacing
 
-h1, h2, h3, h4, h5, h6
-	line-height: 100%
+body
+	padding-bottom: $huge-spacing
 
 h1, h2, h3, h4, h5, h6
+	line-height: 100%
 	padding: $medium-spacing
+	padding-left: 0
 	margin: 0
 
 ul, ol
@@ -179,3 +173,11 @@ ul, ol
 
 .row>.column:last-child:not(:first-child), .row>.columns:last-child:not(:first-child)
 	float: left
+
+
+/* Specific
+
+#password
+	height: $large-spacing + $medium-spacing
+	font-size: $large-spacing
+	line-height: $large-spacing

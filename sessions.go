@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -48,6 +49,9 @@ func cookieStringValue(cookieName string, r *http.Request) (value string, ok boo
 }
 
 func apiLogIn(w http.ResponseWriter, r *http.Request) string {
+	if isLoggedIn(w, r) {
+		return apiResponse{Success: true}.String()
+	}
 	err := logInUser(r.PostFormValue("password"), w)
 	if err != nil {
 		return apiResponse{
@@ -59,12 +63,70 @@ func apiLogIn(w http.ResponseWriter, r *http.Request) string {
 }
 
 func logInUser(password string, w http.ResponseWriter) (err error) {
-	authToken, err := generateStringToken(30)
+	ok, err := checkPassword(password)
+	if err != nil {
+		return
+	}
+	if !ok {
+		return errors.New("Incorrect password.")
+	}
+	authToken, err = generateStringToken(30)
 	if err != nil {
 		return
 	}
 	newCookie := http.Cookie{Name: "auth-token", Value: authToken, Path: "/"}
 	http.SetCookie(w, &newCookie)
+	return
+}
+
+func checkPassword(password string) (ok bool, err error) {
+	if len(panelConfig.Password) == 0 && len(panelConfig.PasswordSalt) == 0 {
+		return signUp(password)
+	}
+	hash, err := scryptHash(password, panelConfig.PasswordSalt)
+	if err != nil {
+		return
+	}
+	if string(hash) == string(panelConfig.Password) {
+		ok = true
+	}
+	return
+}
+
+func signUp(password string) (ok bool, err error) {
+	ok, err = newPanelConfigPasswords(password)
+	if !ok {
+		return
+	}
+	savePanelConfig()
+
+	ok = true
+	return
+}
+
+func newPanelConfigPasswords(password string) (ok bool, err error) {
+	var hash, salt []byte
+	hash, salt, err = scryptHashAndSalt(password)
+	if err != nil {
+		return
+	}
+	panelConfig.Password = hash
+	panelConfig.PasswordSalt = salt
+
+	for i := 0; i < 15; i++ {
+		var newSitePassword string
+		newSitePassword, err = generateStringToken(50)
+		if err != nil {
+			return
+		}
+		panelConfig.NewSitePasswords = append(
+			panelConfig.NewSitePasswords,
+			newSitePassword,
+		)
+	}
+
+	err = errors.New("Since this is the first time you are setting up the site, the one-time passwords to create new sites have been generated for the first time. Please store these somewhere safe: " + fmt.Sprintf("%+v\n", panelConfig.NewSitePasswords))
+
 	return
 }
 

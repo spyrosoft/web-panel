@@ -1,0 +1,1 @@
+$('input:visible').first().focus();

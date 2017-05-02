@@ -1,5 +1,5 @@
 {
-	"password": "password",
+	"server-port": "8080",
 	"site-passwords": [
 		[
 			"password",
@@ -11,10 +11,12 @@
 			"username",
 			"subdomain.example.com"
 		]
-	]
+	],
 	"new-site-passwords": [
 		"one",
 		"two",
 		"three"
 	],
+	"password": "password",
+	"password-salt": "salt"
 }

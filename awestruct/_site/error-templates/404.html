@@ -21,10 +21,15 @@
         <p>
           The page you are looking for cannot be found.
         </p>
+        <div class="messages">
+          <div class="error template"></div>
+          <div class="message template"></div>
+        </div>
       </div>
     </div>
     <script>
       $(document).foundation();
+      $('form.ajax').submit(ajax_form_submission);
     </script>
   </body>
 </html>

@@ -3,26 +3,30 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-type SiteData struct {
-	Password         string     `json:"password"`
-	SitePasswords    [][]string `json:"site-passwords"`
-	NewSitePasswords []string   `json:"new-site-passwords"`
-	ServerPort       string     `json:"server-port"`
+type PanelConfig struct {
+	ServerPort       string              `json:"server-port"`
+	SiteDetails      []map[string]string `json:"site-detials"`
+	NewSitePasswords []string            `json:"new-site-passwords"`
+	Password         []byte              `json:"password"`
+	PasswordSalt     []byte              `json:"password-salt"`
 }
 
 const (
-	webRoot = "awestruct/_site"
+	webRoot             = "awestruct/_site"
+	panelConfigFilePath = "private/panel-config.json"
 )
 
 var (
-	siteData  = SiteData{}
-	authToken string
+	panelConfig = PanelConfig{}
+	authToken   string
 )
 
 type apiResponse struct {
@@ -33,7 +37,7 @@ type apiResponse struct {
 }
 
 func main() {
-	loadSiteData()
+	loadPanelConfig()
 	router := httprouter.New()
 	// Allows requests to pass through to NotFound if one method
 	// is there and the other is not
@@ -48,7 +52,7 @@ func main() {
 	router.POST("/api/", authorizeApi(api))
 
 	router.NotFound = http.HandlerFunc(serveStaticFilesOr404)
-	log.Fatal(http.ListenAndServe(":"+siteData.ServerPort, router))
+	log.Fatal(http.ListenAndServe(":"+panelConfig.ServerPort, router))
 }
 
 func apiNoauth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -61,7 +65,8 @@ func apiNoauth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 func api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	allowedFunctions := map[string]func(http.ResponseWriter, *http.Request) string{
-		"api-update-site-file": apiUpdateSiteFile,
+		"update-site-file": apiUpdateSiteFile,
+		"new-site":         apiNewSite,
 	}
 	apiGeneral(w, r, allowedFunctions)
 }
@@ -88,6 +93,14 @@ func serveStaticFilesOr404Handler(w http.ResponseWriter, r *http.Request, ps htt
 func (r apiResponse) String() string {
 	resultsBytes, _ := json.Marshal(r)
 	return string(resultsBytes)
+}
+
+func savePanelConfig() {
+	panelConfigBytes, err := json.Marshal(panelConfig)
+	panicOnErr(err)
+	filePermissions := os.FileMode(0640)
+	err = ioutil.WriteFile(panelConfigFilePath, panelConfigBytes, filePermissions)
+	panicOnErr(err)
 }
 
 func debug(things ...interface{}) {
